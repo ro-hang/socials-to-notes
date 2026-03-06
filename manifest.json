@@ -1,0 +1,9 @@
+{
+  "id": "socials-to-notes",
+  "name": "Socials to Notes",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Convert Instagram Reels, TikToks, Threads, and Twitter posts into structured Obsidian notes with transcription and AI summarization.",
+  "author": "Rohan Ghiya",
+  "isDesktopOnly": true
+}

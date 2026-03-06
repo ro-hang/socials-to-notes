@@ -1,0 +1,25 @@
+{
+  "name": "socials-to-notes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production",
+    "deploy": "node esbuild.config.mjs production && cp main.js manifest.json \"$HOME/Library/Mobile Documents/iCloud~md~obsidian/Documents/Rohan/.obsidian/plugins/socials-to-notes/\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "esbuild": "^0.27.3",
+    "obsidian": "^1.12.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1003.0"
+  }
+}

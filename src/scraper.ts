@@ -159,6 +159,55 @@ export async function scrapeThreadsPost(url: string): Promise<SocialContent> {
   return content;
 }
 
+export async function scrapeInstagramPost(url: string): Promise<SocialContent | null> {
+  try {
+    const cleanUrl = url.split("?")[0];
+    const html = await fetchUrl(cleanUrl, GOOGLEBOT_UA);
+
+    // Extract og:description (contains the full caption for image posts)
+    const ogDescMatch = html.match(/property="og:description"\s+content="([^"]*)"/);
+    const ogTitleMatch = html.match(/property="og:title"\s+content="([^"]*)"/);
+
+    const rawDesc = ogDescMatch?.[1] || "";
+    const rawTitle = ogTitleMatch?.[1] || "";
+
+    // Decode HTML entities
+    const decode = (s: string) =>
+      s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&#064;/g, "@")
+        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => {
+          const cp = parseInt(hex, 16);
+          if (cp >= 0xD800 && cp <= 0xDFFF) return "";
+          return String.fromCodePoint(cp);
+        });
+
+    const description = decode(rawDesc);
+    const titleText = decode(rawTitle);
+
+    // Extract author from title like "Author Name on Instagram: ..."
+    const authorMatch = titleText.match(/^(.+?)\s+on Instagram/);
+    const author = authorMatch ? authorMatch[1] : "";
+
+    // Extract the actual caption from the description
+    // Format is typically: "N likes, N comments - username on Date: "caption""
+    const captionMatch = description.match(/:\s*"(.+)"$/s);
+    const caption = captionMatch ? captionMatch[1] : description;
+
+    if (!caption && !description) return null;
+
+    return {
+      platform: "instagram",
+      url: cleanUrl,
+      title: (caption || description).slice(0, 100),
+      author,
+      description: caption || description,
+      hasVideo: false,
+    };
+  } catch {
+    return null;
+  }
+}
+
 export async function scrapeRedditPost(url: string): Promise<SocialContent | null> {
   try {
     // Reddit's public JSON API: append .json to any post URL

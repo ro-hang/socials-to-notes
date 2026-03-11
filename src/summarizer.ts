@@ -35,7 +35,7 @@ export async function summarizeContent(
 
   const hasImages = content.imageUrls && content.imageUrls.length > 0;
 
-  const prompt = `You are a note-taking assistant. I saved a ${platformName} post and need you to turn it into a useful, well-structured note for my knowledge base (Obsidian).
+  const prompt = `You are a note-taking assistant for an Obsidian vault. I saved a ${platformName} post and need you to turn it into a useful, well-structured note that integrates with my Obsidian knowledge base.
 
 Source URL: ${content.url}
 Author: ${content.author || "Unknown"}
@@ -45,12 +45,19 @@ ${sourceText}
 ${hasImages ? "I've also attached the carousel images from this post. Please read ALL text from the images and incorporate it fully into the note. The images contain the main content of this post." : ""}
 
 Create a well-structured note with:
-1. A clear, descriptive title (not the original post title if it's vague)
+1. A clear, descriptive title as an H1 heading (not the original post title if it's vague — make it specific and searchable)
 2. A "Key Takeaways" section with bullet points of the main insights
 3. A "Summary" section with a concise paragraph summarizing the content
 4. A "Details" section with any specific tips, steps, or information worth remembering
 5. A "What to Implement" section with actionable items I can actually apply — specific things to try, build, change, or experiment with based on this content. Frame these as concrete next steps or action items, using checkboxes (- [ ]) so I can track them in Obsidian.
-6. Relevant tags (as #hashtags) that would help me find this note later
+6. A "Related Topics" section with Obsidian [[wikilinks]] to concepts, tools, people, or topics mentioned in the content that I might want to create or connect notes for. Think of these as potential backlinks in my vault — link to specific concepts like [[Claude Code]], [[Rate Limiting]], [[JWT Authentication]], [[Next.js]], etc. Only link meaningful concepts, not generic words. Use 3-8 wikilinks.
+7. Tags at the bottom using #hashtags for broad categorization (e.g. #ai, #web-development, #security, #productivity, #design). Use lowercase kebab-case. Include 3-6 tags.
+
+Obsidian formatting guidelines:
+- Use **bold** for key terms and emphasis
+- Use callout blocks (> [!tip], > [!warning], > [!example]) where appropriate for standout advice
+- If the content has a numbered list or step-by-step process, preserve it with numbered lists
+- Keep the note scannable — use headers, bullets, and short paragraphs
 
 Format the output as clean Markdown. Be concise but capture all the valuable information. If the content is instructional, preserve the steps/instructions clearly. If it's informational, focus on the key facts and insights.
 

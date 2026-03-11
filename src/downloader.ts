@@ -3,7 +3,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { SocialContent } from "./types";
 import { detectPlatform } from "./platform";
-import { scrapeThreadsPost, scrapeTwitterPost, scrapeRedditPost } from "./scraper";
+import { scrapeThreadsPost, scrapeTwitterPost, scrapeRedditPost, scrapeInstagramPost } from "./scraper";
 
 const SPAWN_ENV = {
   ...process.env,
@@ -114,6 +114,17 @@ export async function downloadContent(
       description = meta.description || "";
     } catch (e) {
       console.error("Socials-to-Notes: JSON parse failed for metadata");
+    }
+  }
+
+  // If yt-dlp returned no data for Instagram (image/carousel posts), fall back to scraper
+  if (!title && !description && platform === "instagram") {
+    console.log("Socials-to-Notes: yt-dlp returned no data for Instagram, using scraper");
+    try {
+      const scraped = await scrapeInstagramPost(url);
+      if (scraped) return { content: scraped, tempDir };
+    } catch (e: any) {
+      console.error("Socials-to-Notes: Instagram scraper failed:", e.message);
     }
   }
 
